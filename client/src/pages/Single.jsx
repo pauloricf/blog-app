@@ -1,22 +1,60 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import "./single.scss"
 import {Pencil, Trash} from "react-bootstrap-icons"
-import {Link} from "react-router-dom" 
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom" 
 import Menu from '../components/Menu'
+import axios from 'axios'
+import moment from "moment"
+import { AuthContext } from '../context/authContext'
 
 const Single = () => {
+
+  const [post, setPost] = useState([])
+
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const {id} = useParams()
+  console.log(id)
+
+  const {currentUser} = useContext(AuthContext)
+
+
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/posts/${id}`)
+        console.log(res.data)
+        setPost(res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchData()
+  },[id])
+
+  const handleDelete = async() => {
+    try {
+      const res = await axios.delete(`http://localhost:8800/api/posts/${id}`, {withCredentials: true})
+      navigate("/")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className='single'>
       <div className="content">
-        <img src=" https://via.placeholder.com/150" alt="" />
+        <img src={post?.img} alt="" />
 
         <div className="user">
-          <img src="https://via.placeholder.com/150" alt="" />
+          {post.userImg && <img src={post.userImg} alt="" />}
           <div className="info">
-            <span>John</span>
-            <p>Posted 2 days ago</p>
+            <span>{post.username}</span>
+            <p>Posted {moment(post.date).fromNow()}</p>
           </div>
-          <div className="edit">
+         {currentUser?.username === post.username && <div className="edit">
             <Link to={`/write?edit=2`}>
               <div className="pencil-wrap">
               <Pencil className='icon icon-edit'/>
@@ -24,19 +62,17 @@ const Single = () => {
             </Link>
             <Link>
             <div className="trash-wrap">
-              <Trash className='icon icon-delete'/>
+              <Trash onClick={handleDelete} className='icon icon-delete'/>
             </div>
             </Link>
-          </div>
+          </div>}
         </div>
-        <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. </h1>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eaque inventore, molestiae perspiciatis consequuntur doloremque velit, 
-          voluptas est possimus fugiat non eius libero modi aut debitis suscipit, fuga doloribus omnis cupiditate.</p>
-        <br />
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, at odio ut quis ab possimus labore quisquam corrupti illo aliquid odit dolores! Tempora nesciunt voluptatum,
-           sunt odit accusantium consectetur deleniti.</p>
+        <h1>{post.title} </h1>
+
+        {post.desc}    
+            
       </div>
-      <Menu />
+      <Menu cat={post.cat}/>
     </div>
   )
 }

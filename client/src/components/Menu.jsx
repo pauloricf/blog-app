@@ -1,29 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import "./menu.scss"
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
 
-const Menu = () => {
+const Menu = ({cat}) => {
 
-   const posts = [
-      {
-        id: 1,
-        title: 'First Post',
-        desc: 'This is the first post',
-        img: 'https://via.placeholder.com/150'
-      },
-      {
-        id: 2,
-        title: 'Second Post',
-        desc: 'This is the second post',
-        img: 'https://via.placeholder.com/150'
-      },
-      {
-        id: 3,
-        title: 'Third Post',
-        desc: 'This is the third post',
-        img: 'https://via.placeholder.com/150'
-      }
+  const [posts, setPosts] = useState([])
   
-    ]
+
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/posts/?cat=${cat}`)
+        console.log(res.data)
+        setPosts(res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchData()
+  },[cat])
   return (
     <div className='menu'>
       <h1>Other posts you may like</h1>

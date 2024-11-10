@@ -1,27 +1,28 @@
-import React from 'react'
-import {Link} from "react-router-dom"
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import {Link, useLocation} from "react-router-dom"
 const Home = () => {
-  const posts = [
-    {
-      id: 1,
-      title: 'First Post',
-      desc: 'This is the first post',
-      img: 'https://via.placeholder.com/150'
-    },
-    {
-      id: 2,
-      title: 'Second Post',
-      desc: 'This is the second post',
-      img: 'https://via.placeholder.com/150'
-    },
-    {
-      id: 3,
-      title: 'Third Post',
-      desc: 'This is the third post',
-      img: 'https://via.placeholder.com/150'
+  const [posts, setPosts] = useState([])
+
+  const location = useLocation()
+  const cat = useLocation().search;
+  console.log(cat)
+  
+
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/posts${cat}`)
+        console.log(res.data)
+        setPosts(res.data)
+      } catch (error) {
+        console.log(error)
+      }
     }
 
-  ]
+    fetchData()
+  },[cat])
+  
   return (
     <div className='home'>
       <div className="posts">
