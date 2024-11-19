@@ -42,7 +42,7 @@ const Single = () => {
       console.log(error)
     }
   }
-
+  console.log("post: " ,post)
   return (
     <div className='single'>
       <div className="content">
@@ -55,7 +55,7 @@ const Single = () => {
             <p>Posted {moment(post.date).fromNow()}</p>
           </div>
          {currentUser?.username === post.username && <div className="edit">
-            <Link to={`/write?edit=2`}>
+            <Link to={`/write?edit=2`} state={post} >
               <div className="pencil-wrap">
               <Pencil className='icon icon-edit'/>
               </div>
