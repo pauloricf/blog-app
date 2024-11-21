@@ -21,10 +21,10 @@ export const getPost = (req, res) =>{
 export const addPost = (req, res) =>{
   const token = req.cookies.access_token
   if(!token) return res.status(401).json("Not authenticated");
-
+  
   jwt.verify(token, "jwtkey", (err, userInfo) => {
     if(err) return res.status(403).json("Token is not valid");
-
+    
     const q = `insert into posts(title, "desc", "img", "cat", "date", "uid") values ($1, $2, $3, $4, $5, $6)`
     const values = [
       req.body.title,
@@ -34,7 +34,8 @@ export const addPost = (req, res) =>{
       req.body.date,
       userInfo.id
     ]
-    pool.query(q,[values], (err, data) =>{
+    pool.query(q, values, (err, data) =>{
+      console.log("erro controller posts", err)
       if(err) return res.status(500).json(err);
       return res.json("Post has been created")
     })

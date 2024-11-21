@@ -34,11 +34,15 @@ const Write = () => {
       state ? await axios.put(`http://localhost:8800/api/posts/${state.id}`, {
         title, desc: value, cat, img:file ? imgUrl : ""
       }, {withCredentials: true})
-      : await axios.post(`http://localhost:8800/api/posts`,{
+      : 
+      await axios.post(`http://localhost:8800/api/posts`,{
         title, desc: value, cat, img:file ? imgUrl : "", date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
       }, {withCredentials: true},)
+      console.log("1")
+
     } catch (error) {
       console.log(error);
+      console.log("erro write react")
       
     }
   }
